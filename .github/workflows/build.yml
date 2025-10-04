@@ -1,0 +1,43 @@
+name: Build Haber Yazılımı
+
+on:
+  workflow_dispatch:   # Manuel tetikleme için
+  push:                # Commit geldiğinde otomatik build
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: Install PHP deps
+        run: composer install --no-scripts
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Node deps
+        run: |
+          npm install
+          npm run build
+
+      - name: Create Build Zip
+        run: zip -r haber-build.zip . -x "node_modules/*" -x ".git/*"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: haber-build
+          path: haber-build.zip
