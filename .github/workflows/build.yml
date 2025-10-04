@@ -24,7 +24,7 @@ jobs:
         run: composer install --no-scripts
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
@@ -37,7 +37,7 @@ jobs:
         run: zip -r haber-build.zip . -x "node_modules/*" -x ".git/*"
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: haber-build
           path: haber-build.zip
