@@ -19,7 +19,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
           tools: composer
           extensions: mbstring, pdo_mysql, bcmath, intl
 
@@ -55,7 +55,6 @@ jobs:
             -x ".git/*" \
             -x "tests/*" \
             -x "storage/*" \
-            -x ".github/*" \
             -x ".env" \
             -x "*.md" \
             -x "deploy.yml" \
