@@ -1,8 +1,8 @@
 name: Build Haber Yazılımı
 
 on:
-  workflow_dispatch:   # Manuel tetikleme için
-  push:                # Commit geldiğinde otomatik build
+  workflow_dispatch:   # Manuel tetikleme
+  push:                # main'e push geldiğinde otomatik build
     branches:
       - main
 
@@ -11,31 +11,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Kodları al
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 2️⃣ PHP ortamı hazırla
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           tools: composer
+          extensions: mbstring, pdo_mysql, bcmath
 
-      - name: Install PHP deps
-        run: composer install --no-scripts
+      # 3️⃣ Composer bağımlılıklarını kur (tam kurulum)
+      - name: Install PHP dependencies
+        run: composer install --no-dev --optimize-autoloader --prefer-dist
 
+      # 4️⃣ Node.js ortamını hazırla
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      - name: Install Node deps
+      # 5️⃣ Node bağımlılıklarını yükle ve build et
+      - name: Build assets
         run: |
-          npm install
+          npm ci
           npm run build
 
+      # 6️⃣ Gereksiz dosyaları hariç tutarak ZIP oluştur
       - name: Create Build Zip
-        run: zip -r haber-build.zip . -x "node_modules/*" -x ".git/*"
+        run: |
+          zip -r haber-build.zip . \
+            -x "node_modules/*" \
+            -x ".git/*" \
+            -x "tests/*" \
+            -x "storage/*" \
+            -x ".github/*" \
+            -x ".env" \
+            -x "*.md" \
+            -x "deploy.yml" \
+            -x "deploy.php"
 
+      # 7️⃣ Artifact olarak yükle (GitHub Actions'ta tutulur)
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
