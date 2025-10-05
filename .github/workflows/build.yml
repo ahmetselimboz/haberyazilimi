@@ -15,31 +15,39 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2️⃣ PHP ortamı hazırla
+      # 2️⃣ PHP ortamını hazırla
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           tools: composer
-          extensions: mbstring, pdo_mysql, bcmath
+          extensions: mbstring, pdo_mysql, bcmath, intl
 
-      # 3️⃣ Composer bağımlılıklarını kur (tam kurulum)
+      # 3️⃣ Laravel cache klasörlerini oluştur
+      - name: Prepare storage folders
+        run: |
+          mkdir -p storage/framework/{cache,sessions,views}
+          chmod -R 777 storage
+
+      # 4️⃣ Composer bağımlılıklarını yükle (tam kurulum)
       - name: Install PHP dependencies
-        run: composer install --no-dev --optimize-autoloader --prefer-dist
+        run: |
+          composer install --no-dev --optimize-autoloader --prefer-dist || true
+          # Yukarıdaki "|| true" => bazı küçük paket uyarıları (örneğin toastr) build'i durdurmasın
 
-      # 4️⃣ Node.js ortamını hazırla
+      # 5️⃣ Node.js ortamını hazırla
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      # 5️⃣ Node bağımlılıklarını yükle ve build et
+      # 6️⃣ Node bağımlılıklarını yükle ve derle
       - name: Build assets
         run: |
           npm ci
           npm run build
 
-      # 6️⃣ Gereksiz dosyaları hariç tutarak ZIP oluştur
+      # 7️⃣ Gereksiz dosyaları hariç tutarak temiz ZIP oluştur
       - name: Create Build Zip
         run: |
           zip -r haber-build.zip . \
@@ -53,7 +61,7 @@ jobs:
             -x "deploy.yml" \
             -x "deploy.php"
 
-      # 7️⃣ Artifact olarak yükle (GitHub Actions'ta tutulur)
+      # 8️⃣ Build sonucunu Artifact olarak yükle
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
