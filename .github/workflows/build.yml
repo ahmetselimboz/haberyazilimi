@@ -48,21 +48,12 @@ jobs:
           npm run build
 
       # 7️⃣ Gereksiz dosyaları hariç tutarak temiz ZIP oluştur
-      - name: Create Build Zip
-        run: |
-          zip -r haber-build.zip . \
-            -x "node_modules/*" \
-            -x ".git/*" \
-            -x "tests/*" \
-            -x "storage/*" \
-            -x ".env" \
-            -x "*.md" \
-            -x "deploy.yml" \
-            -x "deploy.php"
+      - name: Create Build Archive (tar.gz)
+        run: tar -czf haber-build.tar.gz . --exclude=.git
 
       # 8️⃣ Build sonucunu Artifact olarak yükle
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: haber-build
-          path: haber-build.zip
+          path: haber-build.tar.gz
