@@ -41,18 +41,15 @@ jobs:
       # 6️⃣ Sağlam ZIP oluştur
       - name: Create Build Zip
         run: |
-  
           echo "📦 Creating haber-build.zip ..."
           zip -r haber-build.zip . \
-
-              -x ".git/*" \
-              -x "storage/*" \
-            
-              -x "deploy.php" \
-              -x "deploy.yml" \
-              -x "tests/*" \
-              -x "public/haber-build.zip" \
-              -x "public/haber-build.tar.gz"
+          -x ".git/*" \
+          -x "storage/*" \
+          -x "deploy.php" \
+          -x "deploy.yml" \
+          -x "tests/*" \
+          -x "public/haber-build.zip" \
+          -x "public/haber-build.tar.gz"
           echo "✅ ZIP created successfully."
 
       # 7️⃣ Artifact yükle
