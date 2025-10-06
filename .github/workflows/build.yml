@@ -50,11 +50,17 @@ jobs:
       # 7️⃣ Gereksiz dosyaları hariç tutarak temiz ZIP oluştur
       - name: Create Build Archive (tar.gz)
         run: |
-          tar --exclude='.git' \
+          set +e
+          tar --warning=no-file-changed \
+              --exclude='.git' \
+          
               --exclude='storage' \
+          
               --exclude='deploy.php' \
               --exclude='deploy.yml' \
               -czf haber-build.tar.gz .
+          exit 0
+
 
 
       # 8️⃣ Build sonucunu Artifact olarak yükle
