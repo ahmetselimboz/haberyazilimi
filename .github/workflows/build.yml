@@ -1,8 +1,7 @@
 name: Build Haber Yazılımı
 
 on:
-  workflow_dispatch:   # Manuel tetikleme
-  push:                # main'e push geldiğinde otomatik build
+  push:                # Otomatik build
     branches:
       - main
 
@@ -11,60 +10,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Kodları al
+      # 1️⃣ Kaynak kodu çek
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2️⃣ PHP ortamını hazırla
+      # 2️⃣ PHP kurulumu
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           tools: composer
-          extensions: mbstring, pdo_mysql, bcmath, intl
 
-      # 3️⃣ Laravel cache klasörlerini oluştur
-      - name: Prepare storage folders
-        run: |
-          mkdir -p storage/framework/{cache,sessions,views}
-          chmod -R 777 storage
+      # 3️⃣ Composer bağımlılıklarını yükle
+      - name: Install PHP deps
+        run: composer install --no-scripts --no-interaction --prefer-dist
 
-      # 4️⃣ Composer bağımlılıklarını yükle (tam kurulum)
-      - name: Install PHP dependencies
-        run: |
-          composer install --no-dev --optimize-autoloader --prefer-dist || true
-          # Yukarıdaki "|| true" => bazı küçük paket uyarıları (örneğin toastr) build'i durdurmasın
-
-      # 5️⃣ Node.js ortamını hazırla
+      # 4️⃣ Node kurulumu
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      # 6️⃣ Node bağımlılıklarını yükle ve derle
-      - name: Build assets
+      # 5️⃣ Node bağımlılıklarını yükle ve derle
+      - name: Install Node deps & build
         run: |
-          npm ci
+          npm install
           npm run build
 
-      - name: Create Build Archive (tar.gz)
+      # 6️⃣ Sağlam ZIP oluştur
+      - name: Create Build Zip
         run: |
-          set +e
-          echo "📦 Arşiv oluşturuluyor..."
-          tar --warning=no-file-changed \
-              --exclude='.git' \
-              --exclude='node_modules' \
-              --exclude='storage' \
-              --exclude='.env' \
-              --exclude='deploy.php' \
-              --exclude='deploy.yml' \
-              -czf ${{ github.workspace }}/haber-build.tar.gz .
-          ls -lh ${{ github.workspace }}/haber-build.tar.gz || echo "❌ Arşiv oluşturulamadı!"
-          exit 0
-    
+          sudo apt-get update && sudo apt-get install -y zip
+          echo "📦 Creating haber-build.zip ..."
+          zip -r haber-build.zip . \
+
+              -x ".git/*" \
+              -x "storage/*" \
+            
+              -x "deploy.php" \
+              -x "deploy.yml" \
+              -x "tests/*" \
+              -x "public/haber-build.zip" \
+              -x "public/haber-build.tar.gz"
+          echo "✅ ZIP created successfully."
+
+      # 7️⃣ Artifact yükle
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: haber-build
-          path: ${{ github.workspace }}/haber-build.tar.gz
-          
+          path: haber-build.zip
