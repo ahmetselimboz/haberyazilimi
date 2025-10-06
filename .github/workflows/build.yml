@@ -1,6 +1,7 @@
 name: Build Haber Yazılımı
 
 on:
+  workflow_dispatch:   # Manuel tetikleme
   push:                # Otomatik build
     branches:
       - main
@@ -40,7 +41,7 @@ jobs:
       # 6️⃣ Sağlam ZIP oluştur
       - name: Create Build Zip
         run: |
-          sudo apt-get update && sudo apt-get install -y zip
+  
           echo "📦 Creating haber-build.zip ..."
           zip -r haber-build.zip . \
 
