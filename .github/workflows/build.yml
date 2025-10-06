@@ -47,25 +47,24 @@ jobs:
           npm ci
           npm run build
 
-      # 7️⃣ Gereksiz dosyaları hariç tutarak temiz ZIP oluştur
       - name: Create Build Archive (tar.gz)
         run: |
           set +e
+          echo "📦 Arşiv oluşturuluyor..."
           tar --warning=no-file-changed \
               --exclude='.git' \
-          
+              --exclude='node_modules' \
               --exclude='storage' \
-          
+              --exclude='.env' \
               --exclude='deploy.php' \
               --exclude='deploy.yml' \
-              -czf haber-build.tar.gz .
+              -czf ${{ github.workspace }}/haber-build.tar.gz .
+          ls -lh ${{ github.workspace }}/haber-build.tar.gz || echo "❌ Arşiv oluşturulamadı!"
           exit 0
-
-
-
-      # 8️⃣ Build sonucunu Artifact olarak yükle
+    
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: haber-build
-          path: haber-build.tar.gz
+          path: ${{ github.workspace }}/haber-build.tar.gz
+          
