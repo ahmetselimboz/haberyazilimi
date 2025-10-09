@@ -573,7 +573,7 @@
     </script>
 
     <div class="tmz"></div>
-@elseif($design == 1)
+ @elseif($design == 1)
     @php$trend_news = collect(\Illuminate\Support\Facades\Storage::disk('public')->json('main/hit_news.json'));
             $remaining_news = $trend_news->slice(15);
             $news_groups = $remaining_news->chunk(6)->take(4);

@@ -3,7 +3,7 @@
 	<div class="container mobyok">
     <div class="spotlar">
 	
-	@php $dortlu_mansetler = \Illuminate\Support\Facades\Storage::disk('public')->json('main/dortlu_manset.json'); @endphp
+
 	
 	@php $osay = 0; @endphp
 	@foreach($dortlu_mansetler as $dortlu)

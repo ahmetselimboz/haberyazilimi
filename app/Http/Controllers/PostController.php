@@ -122,7 +122,7 @@ class PostController extends Controller
         foreach ($locations as $type) {
             $type = intval($type);
             $configMap = [
-                0 => ['jsonfile' => 'dortlu_manset', 'take' => 4],
+                0 => ['jsonfile' => 'dortlu_manset', 'take' => 24],
                 1 => ['jsonfile' => 'ana_manset', 'take' => 20],
                 2 => ['jsonfile' => 'mini_manset', 'take' => 15],
                 3 => ['jsonfile' => 'standart_haberler', 'take' => 3000],

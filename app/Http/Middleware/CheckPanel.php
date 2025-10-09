@@ -12,7 +12,7 @@ class CheckPanel
     public function handle(Request $request, Closure $next)
     {
 
-        if (env('APP_ENV') === 'locale') {
+        if (env('APP_ENV') === 'local') {
             return $next($request);
         }
         
@@ -21,7 +21,7 @@ class CheckPanel
          if (!str_starts_with($path, 'secure')) {
               return $next($request);
          }
-        
+       
         Log::info('CheckPanel middleware tetiklendi');
 
         $host = $request->getHost(); // örn: www.haberrize.com.tr
@@ -48,12 +48,13 @@ class CheckPanel
                     return $next($request); // Devam et
                 }
                 else{
+                 
                     return redirect()->route('panel.disabled');
                 }
             }
          
         } catch (\Exception $e) {
-            Log::error($e); // Hataları istersen logla
+            Log::error($e); // Hataları istersen logla  
             
         }
 

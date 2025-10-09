@@ -1,0 +1,52 @@
+/* Pagination Styles */
+.lite-pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--lite-text-primary);
+    background-color: var(--lite-bg-primary);
+    border: 1px solid var(--lite-border);
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.lite-pagination-btn:hover:not(.lite-pagination-disabled) {
+    background-color: var(--lite-accent-primary);
+    transform: scale(1.05);
+    color: var(--lite-text-third);
+    border-color: var(--lite-accent-primary);
+}
+
+.lite-pagination-btn.lite-pagination-active {
+    background-color: var(--lite-accent-primary);
+    color: white;
+    border-color: var(--lite-accent-primary);
+    font-weight: 600;
+}
+
+.lite-pagination-btn.lite-pagination-disabled {
+    color: var(--lite-text-secondary);
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.lite-pagination-btn.lite-pagination-disabled:hover {
+    background-color: var(--lite-bg-primary);
+    transform: none;
+    border-color: var(--lite-border);
+}
+
+.lite-pagination-dots {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--lite-text-secondary);
+    font-weight: 500;
+}

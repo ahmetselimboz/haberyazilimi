@@ -51,7 +51,7 @@ Route::middleware('rolecheck')->group(function () {
 
 });
 
-Route::prefix('secure')->middleware(['rolecheck', 'checkPanel'])->group(function () {
+Route::prefix('secure')->middleware(['rolecheck'])->group(function () {
     Route::get('burak-migrate', [App\Http\Controllers\SecureController::class, 'migrate'])->name('migrate');
 
     Route::get('/', [App\Http\Controllers\SecureController::class, 'index'])->name('secure.index');

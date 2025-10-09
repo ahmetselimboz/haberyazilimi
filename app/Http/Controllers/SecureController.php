@@ -61,8 +61,8 @@ class SecureController extends Controller
         }
 
 
-        $notifications = $this->notificationRequest($request);
-        $information = $this->informationRequest($request);
+        //$notifications = $this->notificationRequest($request);
+        //$information = $this->informationRequest($request);
 
         $trends = [];
 
