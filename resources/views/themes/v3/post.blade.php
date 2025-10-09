@@ -359,7 +359,7 @@
     <div style="clear:both;"></div><br />
     <div style="clear:both;"></div>
 
-    </div>
+        </div>
 
     @if ($infiniteurl != null)
         <a href="{{ route('post', ['categoryslug' => $infiniteurl->category->slug, 'slug' => $infiniteurl->slug, 'id' => $infiniteurl->id]) }}"

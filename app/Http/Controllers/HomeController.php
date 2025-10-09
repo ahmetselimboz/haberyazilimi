@@ -242,19 +242,19 @@ class HomeController extends Controller
             )->limit(20)
             ->get();
 
-            $results = Post::where('publish', 0)
-                ->where('category_id', $post->category_id)
-                ->whereNotIn('id', [$id])
-                ->where(function ($query) {
-                    $query->where('created_at', '>=', now()->subDays(2))
-                        ->orWhere('created_at', '>=', now()->subWeek());
-                })
-                ->select('id', 'title', 'slug', 'category_id', 'created_at', 'hit', 'images', 'extra', 'updated_at')
-                ->with('category')
-                ->orderByRaw('CASE WHEN created_at >= ? THEN 0 ELSE 1 END', [now()->subDays(2)])
-                ->inRandomOrder()
-                ->limit(19)
-                ->get();
+        $results = Post::where('publish', 0)
+            ->where('category_id', $post->category_id)
+            ->whereNotIn('id', [$id])
+            ->where(function ($query) {
+                $query->where('created_at', '>=', now()->subDays(2))
+                    ->orWhere('created_at', '>=', now()->subWeek());
+            })
+            ->select('id', 'title', 'slug', 'category_id', 'created_at', 'hit', 'images', 'extra', 'updated_at', 'description')
+            ->with('category')
+            ->orderByRaw('CASE WHEN created_at >= ? THEN 0 ELSE 1 END', [now()->subDays(2)])
+            ->inRandomOrder()
+            ->limit(19)
+            ->get();
 
 
 
@@ -493,44 +493,53 @@ class HomeController extends Controller
             'name' => 'required|max:255',
             'email' => 'required|email|max:255',
             'detail' => 'required|max:500',
-            'g-recaptcha-response' => 'required',
+
         ], [], [
             'name' => 'Adınız',
             'email' => 'E-posta adresiniz',
             'detail' => 'Yorumunuz',
-            'g-recaptcha-response' => 'Doğrulama'
+
         ]);
 
-        // reCAPTCHA kontrolü
-        $recaptchaResponse = $request->input('g-recaptcha-response');
         $fullUrl = $request->fullUrl(); // Tüm URL'yi alır
         $lastSegment = collect(explode('/', parse_url($fullUrl, PHP_URL_PATH)))->last();
-
-        if (!$recaptchaResponse) {
-            $previousUrl = url()->previous() . '#yorumlar' . $lastSegment;
-            return redirect($previousUrl)->with('captcha_error', 'Lütfen robot olmadığınızı doğrulayın!');
-        }
 
         $settings = Settings::first();
         $recaptcha_secret_key = null;
         if ($settings && isset($settings->magicbox)) {
             $jsondata = json_decode($settings->magicbox, true);
             $recaptcha_secret_key = $jsondata['google_recaptcha_secret_key'] ?? null;
+
+            if (isset($recaptcha_secret_key) && $recaptcha_secret_key != null) {
+                // reCAPTCHA kontrolü
+                $recaptchaResponse = $request->input('g-recaptcha-response');
+
+
+                if (!$recaptchaResponse) {
+                    $previousUrl = url()->previous() . '#yorumlar' . $lastSegment;
+                    return redirect($previousUrl)->with('captcha_error', 'Lütfen robot olmadığınızı doğrulayın!');
+                }
+
+
+
+
+                $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+                    'secret' => $recaptcha_secret_key,
+                    'response' => $recaptchaResponse,
+                    'remoteip' => $request->ip(),
+                ]);
+
+                $body = $response->json();
+
+                if (!($body['success'] ?? false)) {
+                    $previousUrl = url()->previous() . '#yorumlar' . $lastSegment;
+                    return redirect($previousUrl)->with('captcha_error', 'reCAPTCHA doğrulaması başarısız oldu.');
+                }
+            }
+
         }
 
 
-        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => $recaptcha_secret_key,
-            'response' => $recaptchaResponse,
-            'remoteip' => $request->ip(),
-        ]);
-
-        $body = $response->json();
-
-        if (!($body['success'] ?? false)) {
-            $previousUrl = url()->previous() . '#yorumlar' . $lastSegment;
-            return redirect($previousUrl)->with('captcha_error', 'reCAPTCHA doğrulaması başarısız oldu.');
-        }
 
 
         $comment = new Comment();
@@ -551,6 +560,34 @@ class HomeController extends Controller
         if ($comment->save()) {
             $previousUrl = url()->previous() . '#yorumlar' . $lastSegment;
             return redirect($previousUrl)->with('success_comment', 'Yorumunuz alınmıştır!');
+        }
+    }
+
+    public function fastcommentsubmit(Request $request, $type, $post_id)
+    {
+        try {
+            $comment = new Comment();
+            $comment->title = "-";
+            $comment->email = strip_tags($request->email);
+            $comment->slug = Str::slug(strip_tags($request->email));
+            $comment->detail = strip_tags($request->detail);
+            $comment->type = intval(strip_tags($type));
+            $comment->post_id = intval(strip_tags($post_id));
+
+            $settings = json_decode(Storage::disk('public')->get("settings.json"), TRUE);
+            if (json_decode($settings["magicbox"], TRUE)["generalcomment"] == 0) {
+                $comment->publish = 1;
+            } else {
+                $comment->publish = 0;
+            }
+
+            if ($comment->save()) {
+                return redirect()->back()->with('fast_success_comment', 'Yorumunuz alınmıştır!');
+            } else {
+                return redirect()->back()->with('fast_error_comment', 'Yorumunuz kaydedilemedi!');
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('fast_error_comment', 'Yorumunuz alınamadı!');
         }
     }
 
@@ -756,7 +793,7 @@ class HomeController extends Controller
     public function officialAdvert(Request $request)
     {
 
-        $query = OfficialAdvert::where('publish', 0)->select('id', 'title', 'created_at','ilan_id' ,'images')->orderBy('id', 'desc');
+        $query = OfficialAdvert::where('publish', 0)->select('id', 'title', 'created_at', 'ilan_id', 'images')->orderBy('id', 'desc');
 
         if ($request->filled('date')) {
             $date = $request->date;

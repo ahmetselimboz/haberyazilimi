@@ -848,6 +848,7 @@ $(document).ready(function () {
     $('#liteCopyLinkBtn, #liteModalCopyLink').click(function () {
         navigator.clipboard.writeText(window.location.href).then(function () {
             showToast('Link kopyalandı!');
+            $(this).text('Link kopyalandı!');
             $('#liteShareModal').addClass('hidden').removeClass('flex');
         });
     });
@@ -1279,13 +1280,9 @@ $(document).ready(function () {
     });
 
 
-    let currentZoom = 1;
-    let currentImageSrc = '';
-    let currentImageTitle = '';
-    let currentImageAuthor = '';
-    let currentImageDate = '';
+    let isLoading = false;
 
-    // Image loading with fade effect
+    // 🔹 Ortak resim yükleme fonksiyonu
     function handleImageLoad() {
         console.log('Resim yüklendi');
         const $img = $(this);
@@ -1295,30 +1292,78 @@ $(document).ready(function () {
         $skeleton.fadeOut(500);
 
         // Resmi göster
-        $img.animate({ opacity: 1 }, 500);
+        $img.stop(true).animate({ opacity: 1 }, 500);
 
-        // View count artır
+        // View count artır (isteğe bağlı)
         const $viewCount = $('#viewCount');
-        let currentViews = parseInt($viewCount.text().replace(/,/g, '')) || 0;
-        $viewCount.text((currentViews + 1).toLocaleString());
+        if ($viewCount.length) {
+            let currentViews = parseInt($viewCount.text().replace(/,/g, '')) || 0;
+            $viewCount.text((currentViews + 1).toLocaleString());
+        }
     }
 
-    // Resim zaten yüklenmişse direkt çalıştır
-    $('.article-image').each(function () {
-        if (this.complete && this.naturalHeight !== 0) {
-            console.log('Resim cache\'den geldi');
-            handleImageLoad.call(this);
-        } else {
-            // Resim henüz yüklenmediyse event listener ekle
-            $(this).on('load', handleImageLoad);
-        }
+    // 🔹 Yeni eklenen veya mevcut resimlere event bağla
+    function initImageLoader(context = document) {
+        $(context).find('.article-image').each(function () {
+            const img = this;
+            const $img = $(img);
+
+            // Aynı resme iki kere bind etme
+            if ($img.data('loader-attached')) return;
+            $img.data('loader-attached', true);
+
+            // Resim zaten yüklüyse
+            if (img.complete && img.naturalHeight !== 0) {
+                console.log('Resim cache\'den geldi');
+                handleImageLoad.call(img);
+            } else {
+                // Yeni yüklenecekse
+                $img.off('load').on('load', handleImageLoad);
+                $img.off('error').on('error', function () {
+                    console.log('Resim yükleme hatası:', $img.attr('src'));
+                    $(this).siblings('.image-skeleton').fadeOut(500);
+                    $(this).css('opacity', 1);
+                });
+            }
+        });
+    }
+
+    // 🔹 Sayfa ilk açıldığında çalıştır
+    $(document).ready(function () {
+        initImageLoader();
     });
 
-    // Error handling
-    $('.article-image').on('error', function () {
-        console.log('Resim yükleme hatası');
-        $(this).siblings('.image-skeleton').fadeOut(500);
-        showToast('Resim yüklenemedi!', 'error');
+    // 🔹 Infinite scroll sistemi
+    $(window).on('scroll', function () {
+        if (isLoading) return;
+
+        const windowWidth = $(window).width();
+        const scrollOffset = windowWidth <= 768 ? 1800 : 1000;
+
+        if ($(window).scrollTop() + $(window).height() + scrollOffset >= $(document).height()) {
+            const nextUrl = $('#gopostinfinite').attr('href');
+            if (nextUrl) {
+                isLoading = true; // Scroll kilidi
+                $.get(nextUrl, function (data) {
+                    // Yeni içeriği ekle
+                    const $newContent = $(data).find('.infiniteContent');
+                    $('#infiniteBox').append($newContent);
+
+                    // Yeni eklenen haberlerdeki resimleri tanıt
+                    initImageLoader($newContent);
+
+                    // Yeni next URL'yi al
+                    const newNext = $(data).find('#gopostinfinite').attr('href');
+                    if (newNext) {
+                        $('#gopostinfinite').attr('href', newNext);
+                    } else {
+                        $('#gopostinfinite').remove(); // Son sayfaysa linki sil
+                    }
+
+                    isLoading = false; // AJAX bitti
+                });
+            }
+        }
     });
 
     // Expand image button
@@ -2482,6 +2527,25 @@ document.addEventListener('keydown', (e) => {
         vdpToggleMute2947();
     }
 });
+
+function insertBoxAfterParagraph(selector, htmlToInsert, afterParagraph = null) {
+    const $container = $(selector);
+    const paragraphs = $container.find('p');
+
+    if (paragraphs.length === 0) {
+        // Paragraf yoksa en sona ekle
+        $container.append(htmlToInsert);
+        return;
+    }
+
+    // Eklenecek yer: belirtilmişse o paragraf, yoksa ortası
+    const indexToInsert = afterParagraph !== null
+        ? Math.min(afterParagraph, paragraphs.length - 1)
+        : Math.floor(paragraphs.length / 2);
+
+    $(paragraphs[indexToInsert]).after(htmlToInsert);
+}
+
 
 
 

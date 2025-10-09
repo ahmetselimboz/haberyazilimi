@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
+
 if (!function_exists('hasUser')) {
     function hasUser($id)
     {
@@ -319,7 +320,7 @@ if (!function_exists('makeOgImage')) {
 
         $hash = md5($relativePath);
         $ogPath = public_path("uploads/facebook_og/{$hash}.jpg");
-        $ogUrl  = asset("uploads/facebook_og/{$hash}.jpg");
+        $ogUrl = asset("uploads/facebook_og/{$hash}.jpg");
 
         if (!file_exists($ogPath)) {
             // Orijinal resmi oku
@@ -343,28 +344,28 @@ if (!function_exists('makeOgImage')) {
         return $ogUrl;
     }
 }
-    /*
-    *
-    * Prepare a Slug for a given string
-    * Laravel default str_slug does not work for Unicode
-    *
-    * ------------------------------------------------------------------------
-    */
-    if (!function_exists('slug_format')) {
+/*
+ *
+ * Prepare a Slug for a given string
+ * Laravel default str_slug does not work for Unicode
+ *
+ * ------------------------------------------------------------------------
+ */
+if (!function_exists('slug_format')) {
 
-        /**
-         * Format a string to Slug.
-         */
-        function slug_format($string, $sparator = '-')
-        {
-            $string = preg_replace('/\s+/u', $sparator, trim($string));
-            $string = str_replace('/', $sparator, $string);
-            $string = str_replace('\\', $sparator, $string);
-            $turkish = ['ş', 'Ş', 'ı', 'I', 'İ', 'ğ', 'Ğ', 'ü', 'Ü', 'ö', 'Ö', 'ç', 'Ç'];
-            $english = ['s', 'S', 'i', 'I', 'I', 'g', 'G', 'u', 'U', 'o', 'O', 'c', 'C'];
-            $string = str_replace($turkish, $english, $string);
+    /**
+     * Format a string to Slug.
+     */
+    function slug_format($string, $sparator = '-')
+    {
+        $string = preg_replace('/\s+/u', $sparator, trim($string));
+        $string = str_replace('/', $sparator, $string);
+        $string = str_replace('\\', $sparator, $string);
+        $turkish = ['ş', 'Ş', 'ı', 'I', 'İ', 'ğ', 'Ğ', 'ü', 'Ü', 'ö', 'Ö', 'ç', 'Ç'];
+        $english = ['s', 'S', 'i', 'I', 'I', 'g', 'G', 'u', 'U', 'o', 'O', 'c', 'C'];
+        $string = str_replace($turkish, $english, $string);
 
-            return Str::slug($string, $sparator);
-        }
+        return Str::slug($string, $sparator);
     }
+}
 

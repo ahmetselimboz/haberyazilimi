@@ -396,6 +396,7 @@ Route::middleware(['theme', 'maintenance', 'frontmid'])->group(function () {
     Route::get('{author}/{slug}', [App\Http\Controllers\HomeController::class, 'newArticle'])->name('frontend_article');
 
     Route::post('yorumgonder/{type}/{post_id}', [App\Http\Controllers\HomeController::class, 'commentsubmit'])->middleware('throttle:1,1')->name('commentsubmit');
+    Route::post('hizli-yorumgonder/{type}/{post_id}', [App\Http\Controllers\HomeController::class, 'fastcommentsubmit'])->middleware('throttle:1,1')->name('fastcommentsubmit');
     Route::post('makale-gonder', [App\Http\Controllers\HomeController::class, 'articlesend'])->name('articlesend');
     Route::post('arama', [App\Http\Controllers\HomeController::class, 'search'])->name('search');
     Route::get('arama', [App\Http\Controllers\HomeController::class, 'search'])->name('search.get');

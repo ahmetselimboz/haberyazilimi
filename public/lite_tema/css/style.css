@@ -1877,9 +1877,19 @@
     border: 1px solid var(--lite-bg-secondary);
 }
 
+
 .lite-interesting-news-card h3 {
     font-size: 1.25rem;
-    font-weight: 700;
+    font-weight: 700; 
+    margin: 0.75rem 0;
+    line-height: 1.4;
+    transition: color 0.3s ease-in-out;
+    color: var(--lite-text-third);
+}
+
+.lite-interesting-news-card h6 {
+    font-size: 1rem;
+    font-weight: 700; 
     margin: 0.75rem 0;
     line-height: 1.4;
     transition: color 0.3s ease-in-out;
