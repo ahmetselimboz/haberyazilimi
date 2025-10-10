@@ -109,15 +109,19 @@
                                 Ana Sayfa
                             </a>
                         </li>
-                        @if ($article->author)
-                            <li><i class="ri-arrow-right-s-line"></i></li>
-                            <li>
-                                <a href="{{ route('author', ['id' => $article->author->id]) }}"
-                                    class="hover:lite-text-accent transition-colors duration-300">
-                                    {{ $article->author->name }}
-                                </a>
-                            </li>
-                        @endif
+                        <li><i class="ri-arrow-right-s-line"></i></li>
+                        <li>
+                            <a href="{{ route('authors') }}" class="hover:lite-text-accent transition-colors duration-300">
+                                Yazarlar
+                            </a>
+                        </li>
+                        <li><i class="ri-arrow-right-s-line"></i></li>
+                        <li>
+                            <a href="{{ route('author', ['id' => $article->author->id]) }}"
+                                class="hover:lite-text-accent transition-colors duration-300">
+                                {{ $article->author->name }}
+                            </a>
+                        </li>
                         <li><i class="ri-arrow-right-s-line"></i></li>
                         <li class="lite-text-primary line-clamp-1 w-2/3">{{ html_entity_decode($article->title) }}</li>
                     </ol>
@@ -414,15 +418,15 @@
                     <i class="ri-arrow-right-s-line group-hover:translate-x-1 transition-transform duration-300"></i>
                 </div>
                 <!-- Save Tool
-                                                                              <div class="flex items-center justify-between p-3 border lite-border rounded-lg hover:lite-bg-accent hover:text-white hover:lite-accent-border transition-all duration-300 cursor-pointer group"
-                                                                                  id="liteSidebarSave">
-                                                                                  <div class="flex items-center gap-3">
-                                                                                      <i class="ri-bookmark-line text-lg" id="liteSidebarSaveIcon"></i>
-                                                                                      <span class="font-medium">Kaydet</span>
-                                                                                  </div>
-                                                                                  <i
-                                                                                      class="ri-arrow-right-s-line group-hover:translate-x-1 transition-transform duration-300"></i>
-                                                                              </div> -->
+                                                                                  <div class="flex items-center justify-between p-3 border lite-border rounded-lg hover:lite-bg-accent hover:text-white hover:lite-accent-border transition-all duration-300 cursor-pointer group"
+                                                                                      id="liteSidebarSave">
+                                                                                      <div class="flex items-center gap-3">
+                                                                                          <i class="ri-bookmark-line text-lg" id="liteSidebarSaveIcon"></i>
+                                                                                          <span class="font-medium">Kaydet</span>
+                                                                                      </div>
+                                                                                      <i
+                                                                                          class="ri-arrow-right-s-line group-hover:translate-x-1 transition-transform duration-300"></i>
+                                                                                  </div> -->
 
                 <!-- Font Size Tool -->
                 <div class="p-3 border lite-border rounded-lg">
