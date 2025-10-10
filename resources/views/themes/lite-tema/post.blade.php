@@ -424,7 +424,7 @@
                             <h5 class="font-semibold lite-text-primary mb-2">{{ $post->author?->name ?? 'Admin' }}</h5>
                             <p class="text-sm lite-text-secondary mb-3">@lang('auth.editor')</p>
                             <p class="lite-text-primary text-sm leading-relaxed mb-4">
-                                {{ $post->author?->description ?? 'Yazar hakkında daha fazla bilgi bulunmamaktadır.' }}
+                                {{ $post->author?->about ?? 'Yazar hakkında daha fazla bilgi bulunmamaktadır.' }}
                             </p>
                             <div class="flex gap-1">
                                 <a href="#" class="lite-social-icon px-1">

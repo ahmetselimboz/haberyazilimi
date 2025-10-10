@@ -90,8 +90,8 @@
     <div class="lite-page-loader" id="litePageLoader">
         <div class="lite-loader-content">
             <div class="lite-loader-logo">
-                <img src="assets/light-logo.png" alt="Lite Tema" class="lite-logo-light">
-                <img src="assets/dark-logo.png" alt="Lite Tema" class="lite-logo-dark">
+                <img src="{{ asset('uploads/' . $settings['logo']) }}" alt="{{ $magicbox['title'] }}" class="lite-logo-light">
+                <img src="{{ asset('uploads/' . $settings['logo']) }}" alt="{{ $magicbox['title'] }}" class="lite-logo-dark">
             </div>
             <div class="lite-loader-bar">
                 <div class="lite-loader-progress"></div>

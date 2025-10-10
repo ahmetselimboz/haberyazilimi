@@ -251,9 +251,16 @@ $(document).ready(function () {
         if (searchTerm) {
             console.log('Arama yapılıyor:', searchTerm);
             // Burada arama işlemi yapılacak
-            alert('Arama: ' + searchTerm);
+            searchInput.val().trim() = slugFormat(searchInput.val().trim());
         }
     }
+
+    function slugFormat(text) {
+        return text.toLowerCase().replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(
+                /ş/g, 's').replace(/ü/g, 'u').replace(/[^a-z0-9]+/g, '-') // Harf ve rakam dışındakileri tireye çevir
+            .replace(/^-+|-+$/g, ''); // Baş/son tırnakları sil
+    }
+  
 
     // ESC tuşu ile popup'ları kapat
     $(document).keyup(function (e) {
@@ -263,6 +270,8 @@ $(document).ready(function () {
 
             // Arama kutusunu kapat
             const $searchContainer = $('#liteSearchContainer');
+            const $searchInput = $('#liteSearchInput');
+            $searchInput.val('');
             $searchContainer.removeClass('translate-y-0').addClass('-translate-y-full');
 
             // Bildirimi kapat

@@ -392,6 +392,7 @@ Route::middleware(['theme', 'maintenance', 'frontmid'])->group(function () {
     Route::get('video-galeriler', [App\Http\Controllers\HomeController::class, 'video_galleries'])->name('video_galleries');
     Route::get('video-galeri/{categoryslug?}/{slug}/{id}', [App\Http\Controllers\HomeController::class, 'video_gallery'])->name('video_gallery');
     Route::get('yazarlar', [App\Http\Controllers\HomeController::class, 'authors'])->name('authors');
+    Route::get('yazar/{id}', [App\Http\Controllers\HomeController::class, 'author'])->name('author');
     Route::get('makale/{slug}/{id}', [App\Http\Controllers\HomeController::class, 'article'])->name('article');
     Route::get('{author}/{slug}', [App\Http\Controllers\HomeController::class, 'newArticle'])->name('frontend_article');
 

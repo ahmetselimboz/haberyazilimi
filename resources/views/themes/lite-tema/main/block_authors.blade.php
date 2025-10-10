@@ -22,7 +22,7 @@
                                 <i class="ri-arrow-right-line"></i>
                             </button>
                         </div>
-                        <a href="/authors.html" class="lite-btn underline lite-btn-ghost lite-btn-md">Tümünü Gör</a>
+                        <a href="{{ route('authors') }}" class="lite-btn underline lite-btn-ghost lite-btn-md">Tümünü Gör</a>
                     </div>
                 </div>
                 <div class="mt-8">

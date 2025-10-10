@@ -150,8 +150,8 @@
         <!-- Arama Kutusu -->
         <div class="fixed top-15 left-0 right-0 lite-bg-secondary border-b lite-border p-5 z-[1001] transform -translate-y-full transition-transform duration-300"
             id="liteSearchContainer">
-            <div class="w-full max-w-2xl mx-auto relative">
-                <input type="text"
+            <form class="w-full max-w-2xl mx-auto relative" action="{{ route('search.get') }}" method="get" id="search-form">
+                <input name="search" type="text"
                     class="w-full px-4 py-3 pr-12 border-2 lite-border rounded-lg text-base lite-bg-primary lite-text-primary outline-none transition-all duration-300 focus:lite-accent-border"
                     placeholder="Haber ara..." id="liteSearchInput">
                 <button
@@ -159,7 +159,7 @@
                     id="liteSearchSubmit">
                     <i class="ri-search-line"></i>
                 </button>
-            </div>
+            </form>
         </div>
 
         <!-- Bildirim Popup -->

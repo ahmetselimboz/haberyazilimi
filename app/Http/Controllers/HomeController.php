@@ -403,6 +403,20 @@ class HomeController extends Controller
         return view('theme::authors', compact('authors', 'hit_popups', 'ads17'));
     }
 
+    public function author(Request $request, $id)
+    {
+        $author = User::where('id', $id)->with([
+            'articles' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            }
+        ])->first();
+        $hit_popups = Post::where(['publish' => 0, ['created_at', '<', date('Y-m-d H:i:s')]])->select('id', 'title', 'slug', 'images', 'category_id', 'redirect_link', 'created_at')
+            ->with('category:id,title')
+            ->orderBy('hit', 'desc')->take(5)->get();
+
+        return view('theme::author', compact('author', 'hit_popups'));
+    }
+
     public function article(Request $request, $slug, $id)
     {
         $article = Article::where(['publish' => 0, 'id' => $id])->first();
@@ -963,6 +977,7 @@ class HomeController extends Controller
 
     public function loadMore(Request $request, $slug)
     {
+
         $category = Category::where('slug', $slug)->firstOrFail();
 
         $page = $request->input('page', 1);
@@ -986,7 +1001,7 @@ class HomeController extends Controller
             ->orderBy('id', 'desc')
             ->paginate(15, ['*'], 'page', $page);
 
-        $html = view('themes.v3.main._posts_list', compact('posts_other'))->render();
+        $html = view('theme::main._posts_list', compact('posts_other'))->render();
 
         return response()->json([
             'html' => $html,
